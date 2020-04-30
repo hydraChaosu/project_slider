@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0px;
+        padding: 0px;
+      }
+      #root {
+        /* position: relative; */
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+      }
+      .left {
+        position: absolute;
+        top: 50%;
+        left: 0%;
+        transform: translate(0%, -50%);
+        padding: 10px 20px;
+        color: white;
+        background-color: green;
+        border: none;
+        font-size: 2em;
+      }
+      .right {
+        position: absolute;
+        top: 50%;
+        right: 0%;
+        transform: translate(0%, -50%);
+        padding: 10px 20px;
+        color: white;
+        background-color: green;
+        border: none;
+        font-size: 2em;
+      }
+
+      button[disabled],
+      button:disabled {
+        background-color: darkgreen;
+      }
+
+      #wrapper {
+        position: relative;
+        width: 80%;
+        height: 50%;
+      }
+
+      p {
+        width: 80%;
+        padding: 5px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      class Slider {
+        constructor(slides) {
+          this.slides = slides;
+          this.current = 1;
+          this.maxSlides = slides.length;
+
+          this.slider = document.createElement("div");
+          this.slider.setAttribute("id", "root");
+
+          this.image = document.createElement("img");
+
+          this.buttonLeft = this.createButton("left");
+          this.buttonLeft.disabled = true;
+          this.buttonRight = this.createButton("right");
+
+          this.show = document.createElement("p");
+          this.init();
+        }
+        nextSlide() {
+          console.log(this.current, this.maxSlides);
+          if (this.current >= this.maxSlides) {
+            return;
+          }
+          this.current += 1;
+          this.buttonLeft.disabled = false;
+          this.update();
+          console.log(this.current, this.maxSlides);
+        }
+        prevSlide() {
+          console.log(this.current, this.maxSlides);
+          if (this.current <= 1) {
+            return;
+          }
+          this.current -= 1;
+          this.buttonRight.disabled = false;
+          this.update();
+          console.log(this.current, this.maxSlides);
+        }
+        createButton(direction) {
+          const button = document.createElement("button");
+          button.setAttribute("class", direction);
+          let event;
+          if (direction === "left") {
+            button.innerText = "<";
+          }
+          if (direction === "right") {
+            button.innerText = ">";
+          }
+
+          return button;
+        }
+        render() {}
+        update() {
+          console.log(this);
+          this.show.innerText = `${this.current}/${this.maxSlides}`;
+          this.image.setAttribute("src", this.slides[this.current - 1]);
+          if (this.current >= this.maxSlides) {
+            this.buttonRight.disabled = true;
+          }
+          if (this.current <= 1) {
+            this.buttonLeft.disabled = true;
+          }
+        }
+        init() {
+          const wrapper = document.createElement("div");
+          wrapper.setAttribute("id", "wrapper");
+          this.image.setAttribute("src", this.slides[0]);
+          this.slider.appendChild(wrapper);
+          wrapper.appendChild(this.buttonLeft);
+          wrapper.appendChild(this.buttonRight);
+          wrapper.appendChild(this.image);
+          this.show.innerText = `${this.current}/${this.slides.length}`;
+          this.slider.appendChild(this.show);
+          document.body.appendChild(this.slider);
+        }
+      }
+
+      const slider = new Slider([
+        "bunny.jpg",
+        "chick.jpg",
+        "spring.jpg",
+        "marguerite.jpg",
+      ]);
+      const leftButton = document.querySelector(".left");
+      const rightButton = document.querySelector(".right");
+
+      leftButton.addEventListener("click", () => slider.prevSlide());
+      rightButton.addEventListener("click", () => slider.nextSlide());
+      document.addEventListener("keydown", keySliderPress);
+      function keySliderPress(e) {
+        console.log(e.code);
+        if (e.code === "27" || e.code === "ArrowLeft") {
+          slider.prevSlide();
+        } else if (e.code === "26" || e.code === "ArrowRight") {
+          slider.nextSlide();
+        }
+      }
+    </script>
+  </body>
+</html>
